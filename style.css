@@ -94,13 +94,23 @@
 
 .shopping-cart-items li {
   list-style: none;
-  padding: 20px 0 0 0;
+  margin: 20px 0 0 0;
+  position: relative;
 }
 
 .shopping-cart img {
   height: 50px;
   float: left;
   margin-right: 12px;
+}
+
+.item-delete {
+  position: absolute;
+  height: 28px !important;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .item-name {

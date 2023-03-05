@@ -48,12 +48,12 @@ const updateCartIndicator = function () {
   });
 };
 
-const addToCart = function (product) {
+const addToCart = function (product, id) {
   if (product.added_to_cart) return;
   cartItems.push(product);
   product.added_to_cart = true;
   const html = `
-    <li>
+    <li class="product li-product-${id}" data-id="${id}">
       <img
         class="item-image"
         src="/assets/img/${product.product_image}"
@@ -64,6 +64,7 @@ const addToCart = function (product) {
         style: "currency",
         currency: "USD",
       }).format(product.product_price)}</span>
+      <img class="item-delete delete-from-cart" src="/assets/svg/remove.svg"/>
     </li>
   `;
   const shoppingCartItems = document.querySelector(".shopping-cart-items");
@@ -93,7 +94,7 @@ const renderProducts = function () {
 
 const renderProductCard = function (product, index) {
   const html = `
-    <div class="product-card" data-id="${index}">
+    <div class="product-card product-card-${index} product" data-id="${index}">
       <img src='/assets/img/${product.product_image}' alt="${
     product.product_name
   } product" />
@@ -103,7 +104,7 @@ const renderProductCard = function (product, index) {
         currency: "USD",
       }).format(product.product_price)}</p>
       <div class='card-buttons'>
-        <button class='add-to-cart'>Add to Cart</button>
+        <button class='add-to-cart add-to-cart-btn-${index}'>Add to Cart</button>
         <button class='quick-view'>Quick View</button>
       </div>
     </div>
@@ -113,15 +114,18 @@ const renderProductCard = function (product, index) {
 };
 
 const listenForAddToCartBtn = function () {
-  addToCartBtn.forEach((btn) => {
+  addToCartBtn?.forEach((btn) => {
     btn.addEventListener("click", function (e) {
-      e.target.closest(".add-to-cart").innerText = "Remove From Cart";
-      e.target.closest(".add-to-cart").classList.add("remove-from-cart");
-      const id = e.target.closest(".product-card").dataset.id;
-      addToCart(products[id]);
+      const addToCartBtn = e.target.closest(".add-to-cart");
+      addToCartBtn.innerText = "Remove From Cart";
+      addToCartBtn.classList.add("remove-from-cart");
+      const id = e.target.closest(".product").dataset.id;
+      addToCart(products[id], id);
     });
   });
 };
+
+const listenForDeleteBtn = function () {};
 
 renderProducts();
 listenForAddToCartBtn();
