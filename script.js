@@ -37,10 +37,63 @@ const products = [
   },
 ];
 
-const productsContainer = document.querySelector(".product-container");
-products.forEach((product) => {
+const cartIndicators = document.querySelectorAll(".cart-indicator");
+let cartItems = [];
+
+const updateCartIndicator = function () {
+  cartItems = products.filter((product) => product.added_to_cart);
+  cartIndicators.forEach((cartIndicator) => {
+    cartIndicator.innerText = cartItems.length;
+    cartIndicator.dataset.indicator = cartItems.length;
+  });
+};
+
+const addToCart = function (product) {
+  if (product.added_to_cart) return;
+  cartItems.push(product);
+  product.added_to_cart = true;
   const html = `
-    <div class="product-card">
+    <li>
+      <img
+        class="item-image"
+        src="/assets/img/${product.product_image}"
+        alt="${product.product_name} product"
+      />
+      <span class="item-name">${product.product_name}</span>
+      <span class="item-price">${new Intl.NumberFormat("us-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(product.product_price)}</span>
+    </li>
+  `;
+  const shoppingCartItems = document.querySelector(".shopping-cart-items");
+  shoppingCartItems.insertAdjacentHTML("beforeend", html);
+  updateCartIndicator();
+  updateTotalPrice();
+};
+
+const updateTotalPrice = function () {
+  const totalPrice = document.querySelector(".shopping-cart-total-price");
+  const totalPriceValue = cartItems.reduce((acc, product) => {
+    return acc + parseFloat(product.product_price);
+  }, 0);
+  totalPrice.textContent = new Intl.NumberFormat("us-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(totalPriceValue);
+};
+
+var addToCartBtn;
+const renderProducts = function () {
+  products.forEach((product, index) => {
+    renderProductCard(product, index);
+  });
+  addToCartBtn = document.querySelectorAll(".add-to-cart");
+};
+
+const renderProductCard = function (product, index) {
+  const html = `
+    <div class="product-card" data-id="${index}">
       <img src='/assets/img/${product.product_image}' alt="${
     product.product_name
   } product" />
@@ -49,8 +102,26 @@ products.forEach((product) => {
         style: "currency",
         currency: "USD",
       }).format(product.product_price)}</p>
-      <button>Add to Cart</button>
+      <div class='card-buttons'>
+        <button class='add-to-cart'>Add to Cart</button>
+        <button class='quick-view'>Quick View</button>
+      </div>
     </div>
   `;
+  const productsContainer = document.querySelector(".product-container");
   productsContainer.insertAdjacentHTML("beforeend", html);
-});
+};
+
+const listenForAddToCartBtn = function () {
+  addToCartBtn.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.target.closest(".add-to-cart").innerText = "Remove From Cart";
+      e.target.closest(".add-to-cart").classList.add("remove-from-cart");
+      const id = e.target.closest(".product-card").dataset.id;
+      addToCart(products[id]);
+    });
+  });
+};
+
+renderProducts();
+listenForAddToCartBtn();
