@@ -69,8 +69,6 @@ const addToCart = function (product, id) {
   `;
   const shoppingCartItems = document.querySelector(".shopping-cart-items");
   shoppingCartItems.insertAdjacentHTML("beforeend", html);
-  updateCartIndicator();
-  updateTotalPrice();
 };
 
 const updateTotalPrice = function () {
@@ -111,43 +109,49 @@ const renderProductCard = function (product, index) {
   productsContainer.insertAdjacentHTML("beforeend", html);
 };
 
-renderProducts();
+const toggleCardBtn = function (btn, newText) {
+  btn.classList.toggle("add-to-cart");
+  btn.classList.toggle("delete-from-cart");
+  btn.classList.toggle("delete-style");
+  btn.textContent = newText;
+};
 
+const updateInfo = function () {
+  updateCartIndicator();
+  updateTotalPrice();
+};
+
+renderProducts();
 window.addEventListener("click", function (e) {
+  //add to cart clicked
   if (e.target.classList.contains("add-to-cart")) {
     const btn = e.target;
     const id = e.target.closest(".product").dataset.id;
-    btn.classList.remove("add-to-cart");
-    btn.classList.add("delete-from-cart");
-    btn.classList.add("delete-style");
-    btn.textContent = "Remove from Cart";
+    toggleCardBtn(btn, "Remove From Cart");
     addToCart(products[id], id);
+    updateInfo();
     return;
   }
+
+  //delete from cart clicked
   if (e.target.classList.contains("delete-from-cart")) {
     const id = e.target.closest(".product").dataset.id;
     const btn = e.target;
-    btn.classList.add("add-to-cart");
-    btn.classList.remove("delete-from-cart");
-    btn.classList.remove("delete-style");
-    btn.textContent = "Add To Cart";
+    toggleCardBtn(btn, "Add To Cart");
     products[id].added_to_cart = false;
     document.querySelector(`.li-product-${id}`).remove();
-    updateCartIndicator();
-    updateTotalPrice();
+    updateInfo();
     return;
   }
+
+  //delete from cart icon clicked
   if (e.target.classList.contains("delete-from-cart-icon")) {
     const id = e.target.closest(".product").dataset.id;
     products[id].added_to_cart = false;
     document.querySelector(`.li-product-${id}`).remove();
     const btn = document.querySelector(`.add-to-cart-btn-${id}`);
-    btn.classList.add("add-to-cart");
-    btn.classList.remove("delete-from-cart");
-    btn.classList.remove("delete-style");
-    btn.textContent = "Add To Cart";
-    updateCartIndicator();
-    updateTotalPrice();
+    toggleCardBtn(btn, "Add To Cart");
+    updateInfo();
     return;
   }
 });
