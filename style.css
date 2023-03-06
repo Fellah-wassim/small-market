@@ -220,13 +220,13 @@ button:hover {
   background-color: var(--color-primary-hover);
 }
 
-.remove-from-cart {
+.delete-style {
   background-color: var(--color-delete);
   font-weight: 400;
   font-size: 15px;
 }
 
-.remove-from-cart:hover {
+.delete-style:hover {
   background-color: var(--color-delete-hover);
 }
 
