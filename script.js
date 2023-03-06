@@ -37,8 +37,8 @@ const products = [
   },
 ];
 
-const cartIndicators = document.querySelectorAll(".cart-indicator");
 let cartItems = [];
+const cartIndicators = document.querySelectorAll(".cart-indicator");
 
 const updateCartIndicator = function () {
   cartItems = products.filter((product) => product.added_to_cart);
@@ -52,6 +52,26 @@ const addToCart = function (product, id) {
   if (product.added_to_cart) return;
   cartItems.push(product);
   products[id].added_to_cart = true;
+  const html = `
+    <li class="product li-product-${id}" data-id="${id}">
+      <img
+        class="item-image"
+        src="/assets/img/${product.product_image}"
+        alt="${product.product_name} product"
+      />
+      <span class="item-name">${product.product_name}</span>
+      <span class="item-price">${new Intl.NumberFormat("us-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(product.product_price)}</span>
+      <img class="item-delete delete-from-cart-icon" src="/assets/svg/remove.svg"/>
+    </li>
+  `;
+  const shoppingCartItems = document.querySelector(".shopping-cart-items");
+  shoppingCartItems.insertAdjacentHTML("beforeend", html);
+};
+
+const addToCartWithoutCheck = function (product, id) {
   const html = `
     <li class="product li-product-${id}" data-id="${id}">
       <img
@@ -137,6 +157,7 @@ window.addEventListener("click", function (e) {
   if (e.target.classList.contains("delete-from-cart")) {
     const id = e.target.closest(".product").dataset.id;
     const btn = e.target;
+    cartItems.splice(id, 1);
     toggleCardBtn(btn, "Add To Cart");
     products[id].added_to_cart = false;
     document.querySelector(`.li-product-${id}`).remove();
@@ -147,6 +168,7 @@ window.addEventListener("click", function (e) {
   //delete from cart icon clicked
   if (e.target.classList.contains("delete-from-cart-icon")) {
     const id = e.target.closest(".product").dataset.id;
+    cartItems.splice(id, 1);
     products[id].added_to_cart = false;
     document.querySelector(`.li-product-${id}`).remove();
     const btn = document.querySelector(`.add-to-cart-btn-${id}`);
@@ -154,4 +176,13 @@ window.addEventListener("click", function (e) {
     updateInfo();
     return;
   }
+
+  //show cart clicked
+  if (e.target.classList.contains("show-cart-btn")) {
+    document.querySelector(".shopping-cart").classList.toggle("hidden");
+    return;
+  }
+
+  //if no element from those have been clicked, hide the cart
+  document.querySelector(".shopping-cart").classList.add("hidden");
 });
