@@ -245,6 +245,30 @@ button:hover {
   font-weight: 400;
 }
 
+.modal {
+  width: 100vw;
+  height: 100vh;
+  z-index: 101;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background-color: var(--color-white);
+  border-radius: 7px;
+  width: 50%;
+  height: fit-content;
+  display: flex;
+  padding: 1rem;
+}
+
+.modal-img {
+  width: 30%;
+}
+
 @media (max-width: 768px) {
   .navbar {
     opacity: 0.95;
@@ -296,6 +320,16 @@ button:hover {
   .shopping-cart-header {
     gap: 5rem;
   }
+
+  .modal-box {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .product-description {
+    text-align: left;
+  }
 }
 
 @media (max-width: 500px) {
@@ -325,29 +359,6 @@ button:hover {
     padding: 5px;
     gap: 5px;
   }
-}
-
-.modal {
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-box {
-  background-color: var(--color-white);
-  border-radius: 7px;
-  width: 50%;
-  height: fit-content;
-  display: flex;
-  padding: 1rem;
-}
-
-.modal-img {
-  width: 30%;
 }
 
 .hidden {

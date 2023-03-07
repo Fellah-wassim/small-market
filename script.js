@@ -42,7 +42,7 @@ allProducts.forEach((product, index) => {
   product.id = index;
 });
 
-let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+let cartItems = [];
 const cartIndicators = document.querySelectorAll(".cart-indicator");
 
 const updateCartIndicator = function () {
@@ -160,7 +160,7 @@ const openQuickViewModal = function (product) {
                 currency: "USD",
               }).format(product.product_price)}</span>
             </p>
-            <p>
+            <p class="product-description">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
               sapiente mollitia eaque quaerat.
             </p>
@@ -183,12 +183,15 @@ const openQuickViewModal = function (product) {
     `;
   const modal = document.querySelector(".modal");
   modal.insertAdjacentHTML("beforeend", html);
+  modal.style.top = `${window.scrollY}px`;
+  document.querySelector("body").style.overflow = "hidden";
   modal.classList.remove("hidden");
 };
 
 const closeQuickViewModal = function () {
   document.querySelector(".modal").innerHTML = "";
   document.querySelector(".modal").classList.add("hidden");
+  document.querySelector("body").style.overflow = "scroll";
 };
 
 window.addEventListener("click", function (e) {
@@ -256,6 +259,7 @@ window.addEventListener("click", function (e) {
   if (e.target.classList.contains("modal")) {
     closeQuickViewModal();
   }
+
   //if no element from those have been clicked, hide the cart
   document.querySelector(".shopping-cart").classList.add("hidden");
 });
