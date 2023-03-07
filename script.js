@@ -145,6 +145,52 @@ const toggleCardBtn = function (btn, newText) {
   btn.textContent = newText;
 };
 
+const openQuickViewModal = function (product) {
+  const html = `
+      <div class="product modal-box" data-id="${product.id}">
+        <img class="modal-img" src="/assets/img/${
+          product.product_image
+        }" alt="${product.product_name}" />
+        <div>
+          <div>
+            <h2>${product.product_name}</h2>
+            <p class="price">
+              <span class="price">${new Intl.NumberFormat("us-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(product.product_price)}</span>
+            </p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
+              sapiente mollitia eaque quaerat.
+            </p>
+          </div>
+          <div class="modal-buttons">
+            <button class=" add-to-cart-btn-${product.id} ${
+    allProducts[product.id].added_to_cart
+      ? "delete-from-cart delete-style"
+      : "add-to-cart"
+  }">
+              ${
+                allProducts[product.id].added_to_cart
+                  ? "Remove From Cart"
+                  : "Add To Cart"
+              }
+            </button>
+          </div>
+        </div>
+    </div>
+    `;
+  const modal = document.querySelector(".modal");
+  modal.insertAdjacentHTML("beforeend", html);
+  modal.classList.remove("hidden");
+};
+
+const closeQuickViewModal = function () {
+  document.querySelector(".modal").innerHTML = "";
+  document.querySelector(".modal").classList.add("hidden");
+};
+
 window.addEventListener("click", function (e) {
   //add to cart clicked
   if (e.target.classList.contains("add-to-cart")) {
@@ -203,50 +249,12 @@ window.addEventListener("click", function (e) {
   if (e.target.classList.contains("quick-view")) {
     const id = e.target.closest(".product").dataset.id;
     const product = allProducts[id];
-    const html = `
-       <div class="product modal-box" data-id="${product.id}">
-        <img class="modal-img" src="/assets/img/${
-          product.product_image
-        }" alt="" />
-        <div>
-          <div>
-            <h2>${product.product_name}</h2>
-            <p class="price">
-              <span class="price">${new Intl.NumberFormat("us-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(product.product_price)}</span>
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
-              sapiente mollitia eaque quaerat.
-            </p>
-          </div>
-          <div class="modal-buttons">
-            <button class=" add-to-cart-btn-${product.id} ${
-      allProducts[product.id].added_to_cart
-        ? "delete-from-cart delete-style"
-        : "add-to-cart"
-    }">
-             ${
-               allProducts[product.id].added_to_cart
-                 ? "Remove From Cart"
-                 : "Add To Cart"
-             }
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-    const modal = document.querySelector(".modal");
-    modal.insertAdjacentHTML("beforeend", html);
-    modal.classList.remove("hidden");
+    openQuickViewModal(product);
     return;
   }
 
   if (e.target.classList.contains("modal")) {
-    document.querySelector(".modal").innerHTML = "";
-    document.querySelector(".modal").classList.add("hidden");
+    closeQuickViewModal();
   }
   //if no element from those have been clicked, hide the cart
   document.querySelector(".shopping-cart").classList.add("hidden");
