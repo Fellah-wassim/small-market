@@ -18,6 +18,14 @@
   margin: 0;
 }
 
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .html {
   font-size: 62.5%;
 }
