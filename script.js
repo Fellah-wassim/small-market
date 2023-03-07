@@ -37,7 +37,12 @@ const products = [
   },
 ];
 
-let cartItems = [];
+const allProducts = products;
+allProducts.forEach((product, index) => {
+  product.id = index;
+});
+
+let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
 const cartIndicators = document.querySelectorAll(".cart-indicator");
 
 const updateCartIndicator = function () {
@@ -51,7 +56,7 @@ const updateCartIndicator = function () {
 const addToCart = function (product, id) {
   if (product.added_to_cart) return;
   cartItems.push(product);
-  products[id].added_to_cart = true;
+  allProducts[id].added_to_cart = true;
   const html = `
     <li class="product li-product-${id}" data-id="${id}">
       <img
@@ -103,14 +108,16 @@ const updateTotalPrice = function () {
 };
 
 const renderProducts = function () {
-  products.forEach((product, index) => {
-    renderProductCard(product, index);
+  allProducts.forEach((product) => {
+    renderProductCard(product, product.id);
   });
 };
 
-const renderProductCard = function (product, index) {
+const renderProductCard = function (product) {
   const html = `
-    <div class="product-card product-card-${index} product" data-id="${index}">
+    <div class="product-card product-card-${product.id} product" data-id="${
+    product.id
+  }">
       <img src='/assets/img/${product.product_image}' alt="${
     product.product_name
   } product" />
@@ -120,7 +127,9 @@ const renderProductCard = function (product, index) {
         currency: "USD",
       }).format(product.product_price)}</p>
       <div class='card-buttons'>
-        <button class='add-to-cart add-to-cart-btn-${index}'>Add to Cart</button>
+        <button class='add-to-cart add-to-cart-btn-${
+          product.id
+        }'>Add to Cart</button>
         <button class='quick-view'>Quick View</button>
       </div>
     </div>
@@ -136,32 +145,35 @@ const toggleCardBtn = function (btn, newText) {
   btn.textContent = newText;
 };
 
-const updateInfo = function () {
-  updateCartIndicator();
-  updateTotalPrice();
-};
-
-renderProducts();
 window.addEventListener("click", function (e) {
   //add to cart clicked
   if (e.target.classList.contains("add-to-cart")) {
-    const btn = e.target;
     const id = e.target.closest(".product").dataset.id;
-    toggleCardBtn(btn, "Remove From Cart");
-    addToCart(products[id], id);
-    updateInfo();
+    const btns = document.querySelectorAll(`.add-to-cart-btn-${id}`);
+    btns.forEach((btn) => {
+      toggleCardBtn(btn, "Remove From Cart");
+    });
+    addToCart(allProducts[id], id);
+    updateCartIndicator();
+    updateTotalPrice();
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
     return;
   }
 
   //delete from cart clicked
   if (e.target.classList.contains("delete-from-cart")) {
     const id = e.target.closest(".product").dataset.id;
-    const btn = e.target;
+    const btns = this.document.querySelectorAll(`.add-to-cart-btn-${id}`);
     cartItems.splice(id, 1);
-    toggleCardBtn(btn, "Add To Cart");
-    products[id].added_to_cart = false;
+    btns.forEach((btn) => {
+      console.log("gg");
+      toggleCardBtn(btn, "Add To Cart");
+    });
+    allProducts[id].added_to_cart = false;
     document.querySelector(`.li-product-${id}`).remove();
-    updateInfo();
+    updateCartIndicator();
+    updateTotalPrice();
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
     return;
   }
 
@@ -169,11 +181,15 @@ window.addEventListener("click", function (e) {
   if (e.target.classList.contains("delete-from-cart-icon")) {
     const id = e.target.closest(".product").dataset.id;
     cartItems.splice(id, 1);
-    products[id].added_to_cart = false;
+    allProducts[id].added_to_cart = false;
     document.querySelector(`.li-product-${id}`).remove();
-    const btn = document.querySelector(`.add-to-cart-btn-${id}`);
-    toggleCardBtn(btn, "Add To Cart");
-    updateInfo();
+    const btns = document.querySelectorAll(`.add-to-cart-btn-${id}`);
+    btns.forEach((btn) => {
+      toggleCardBtn(btn, "Add To Cart");
+    });
+    updateCartIndicator();
+    updateTotalPrice();
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
     return;
   }
 
@@ -183,6 +199,57 @@ window.addEventListener("click", function (e) {
     return;
   }
 
+  //quick view clicked
+  if (e.target.classList.contains("quick-view")) {
+    const id = e.target.closest(".product").dataset.id;
+    const product = allProducts[id];
+    const html = `
+       <div class="product modal-box" data-id="${product.id}">
+        <img class="modal-img" src="/assets/img/${
+          product.product_image
+        }" alt="" />
+        <div>
+          <div>
+            <h2>${product.product_name}</h2>
+            <p class="price">
+              <span class="price">${new Intl.NumberFormat("us-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(product.product_price)}</span>
+            </p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
+              sapiente mollitia eaque quaerat.
+            </p>
+          </div>
+          <div class="modal-buttons">
+            <button class=" add-to-cart-btn-${product.id} ${
+      allProducts[product.id].added_to_cart
+        ? "delete-from-cart delete-style"
+        : "add-to-cart"
+    }">
+             ${
+               allProducts[product.id].added_to_cart
+                 ? "Remove From Cart"
+                 : "Add To Cart"
+             }
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    const modal = document.querySelector(".modal");
+    modal.insertAdjacentHTML("beforeend", html);
+    modal.classList.remove("hidden");
+    return;
+  }
+
+  if (e.target.classList.contains("modal")) {
+    document.querySelector(".modal").innerHTML = "";
+    document.querySelector(".modal").classList.add("hidden");
+  }
   //if no element from those have been clicked, hide the cart
   document.querySelector(".shopping-cart").classList.add("hidden");
 });
+
+renderProducts();

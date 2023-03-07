@@ -22,10 +22,6 @@
   font-size: 62.5%;
 }
 
-.hidden {
-  display: none;
-}
-
 .container {
   max-width: 1200px;
   width: 90%;
@@ -200,6 +196,7 @@
 .price {
   font-size: 24px;
   font-weight: bold;
+  color: var(--color-primary);
 }
 
 button {
@@ -328,4 +325,31 @@ button:hover {
     padding: 5px;
     gap: 5px;
   }
+}
+
+.modal {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background-color: var(--color-white);
+  border-radius: 7px;
+  width: 50%;
+  height: fit-content;
+  display: flex;
+  padding: 1rem;
+}
+
+.modal-img {
+  width: 30%;
+}
+
+.hidden {
+  display: none;
 }
